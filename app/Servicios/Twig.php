@@ -1,15 +1,18 @@
 <?php
+
 namespace Parzibyte\Servicios;
 
-use Twig_Environment;
-use Twig_Loader_Filesystem;
+use Parzibyte\Modelos\ModeloUsuarios;
+use Twig\Environment as Twig_Environment;
+use Twig\TwigFunction as Twig_SimpleFunction;
+use Twig\Loader\FilesystemLoader;
 
 class Twig
 {
 
     public static function obtener()
     {
-        $loader = new Twig_Loader_Filesystem(DIRECTORIO_RAIZ . "/vistas");
+        $loader = new FilesystemLoader(DIRECTORIO_RAIZ . "/vistas");
         $cachearTwig = boolval(Comun::env("HABILITAR_CACHE_TWIG", false));
         $rutaCacheTwig = false;
         if ($cachearTwig) {
@@ -26,8 +29,10 @@ class Twig
         $twig->addGlobal("WEB_AUTOR", WEB_AUTOR);
         $twig->addGlobal("TIEMPO_ACTUAL", time());
         $twig->addGlobal("USUARIO_LOGUEADO", SesionService::leer("correoUsuario"));
-        $twig->addGlobal("USUARIO_ADMIN", SesionService::leer("administrador"));
-        $twig->addFunction(new \Twig_SimpleFunction("sesion_flash", function ($clave) {
+        $twig->addGlobal("TOKEN_CSRF", "123");
+        $usuario = ModeloUsuarios::uno(SesionService::leer("idUsuario"));
+        $twig->addGlobal("USUARIO_ADMIN", $usuario != null && $usuario->administrador);
+        $twig->addFunction(new Twig_SimpleFunction("sesion_flash", function ($clave) {
             return SesionService::flash($clave);
         }));
         return $twig;
