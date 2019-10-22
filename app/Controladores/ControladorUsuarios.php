@@ -57,6 +57,28 @@ class ControladorUsuarios
             ->do();
     }
 
+    public static function hacerAdministrador($idUsuario)
+    {
+        $resultado = ModeloUsuarios::cambiarAdministrador($idUsuario, 1);
+        Redirect::to("/usuarios")
+            ->with([
+                "tipo" => $resultado ? "success" : "warning",
+                "mensaje" => $resultado ? "Permisos cambiados" : "Error cambiando permisos",
+            ])
+            ->do();
+    }
+
+    public static function removerAdministrador($idUsuario)
+    {
+        $resultado = ModeloUsuarios::cambiarAdministrador($idUsuario, 0);
+        Redirect::to("/usuarios")
+            ->with([
+                "tipo" => $resultado ? "success" : "warning",
+                "mensaje" => $resultado ? "Permisos cambiados" : "Error cambiando permisos",
+            ])
+            ->do();
+    }
+
     public static function formularioRestablecerPassword($token)
     {
         return view("usuarios/restablecer_password", ["token" => $token]);
@@ -67,7 +89,7 @@ class ControladorUsuarios
         Validator::validateOrRedirect($_POST, [
             "required" => ["token", "palabraSecreta", "palabraSecretaConfirm"],
             "equals" => [
-                ["palabraSecreta", "palabraSecretaConfirm"]
+                ["palabraSecreta", "palabraSecretaConfirm"],
             ],
         ]);
         $token = $_POST["token"];

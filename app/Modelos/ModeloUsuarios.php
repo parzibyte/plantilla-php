@@ -54,6 +54,15 @@ class ModeloUsuarios
         return $sentencia->execute([$palabraSecretaCifrada, $id]);
     }
 
+    public static function cambiarAdministrador($idUsuario, $esAdministrador)
+    {
+        $esAdministrador = intval($esAdministrador);
+        $bd = BD::obtener();
+        $sentencia = $bd->prepare("UPDATE usuarios SET administrador = ? WHERE id = ?");
+        return $sentencia->execute([$esAdministrador, $idUsuario]);
+    }
+
+
     public static function agregar($correo, $palabraSecreta, $administrador = false, $cifrarPalabraSecreta = true)
     {
         $bd = BD::obtener();
