@@ -29,11 +29,13 @@ class Twig
         $twig->addGlobal("WEB_AUTOR", WEB_AUTOR);
         $twig->addGlobal("TIEMPO_ACTUAL", time());
         $twig->addGlobal("USUARIO_LOGUEADO", SesionService::leer("correoUsuario"));
-        $twig->addGlobal("TOKEN_CSRF", "123");
         $usuario = ModeloUsuarios::uno(SesionService::leer("idUsuario"));
         $twig->addGlobal("USUARIO_ADMIN", $usuario != null && $usuario->administrador);
         $twig->addFunction(new Twig_SimpleFunction("sesion_flash", function ($clave) {
             return SesionService::flash($clave);
+        }));
+        $twig->addFunction(new Twig_SimpleFunction("token_csrf", function () {
+            return \Parzibyte\Servicios\Seguridad::obtenerTokenCSRF();
         }));
         return $twig;
     }
