@@ -36,3 +36,6 @@ HABILITAR_CACHE_TWIG = false
 RUTA_CACHE_TWIG = "cache_twig"
 DIRECCION_CORREO_REMITENTE = "tu_direccion@dominio.com"
 NOMBRE_REMITENTE = "Nombre del remitente"
+
+; Configuraciones del sistema, ya no tanto credenciales
+PERMITIR_REGISTRO_USUARIOS = true

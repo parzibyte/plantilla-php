@@ -2,6 +2,7 @@
 
 use Parzibyte\Modelos\ModeloUsuarios;
 use Parzibyte\Redirect;
+use Parzibyte\Servicios\Comun;
 use Parzibyte\Servicios\Seguridad;
 use Parzibyte\Servicios\SesionService;
 use Phroute\Phroute\RouteCollector;
@@ -70,20 +71,19 @@ $enrutador
 
 $enrutador->post("/login", ["Parzibyte\Controladores\ControladorLogin", "login"]);
 $enrutador->get("/login", ["Parzibyte\Controladores\ControladorLogin", "index"]);
-$enrutador->get("/registro", ["Parzibyte\Controladores\ControladorUsuarios", "registrar"]);
-$enrutador->post("/usuarios/registro", ["Parzibyte\Controladores\ControladorUsuarios", "registro"]);
-
-$enrutador->get("/usuarios/verificar/{token}", ["Parzibyte\Controladores\ControladorUsuarios", "verificar"]);
-# Cuando quieren resetear
-$enrutador->get("/usuarios/solicitar-nueva-password", ["Parzibyte\Controladores\ControladorUsuarios", "formularioSolicitarNuevaPassword"]);
-$enrutador->post("/usuarios/solicitar-nueva-password", ["Parzibyte\Controladores\ControladorUsuarios", "solicitarNuevaPassword"]);
-# Cuando ya les llegó el correo
-$enrutador->get("/usuarios/restablecer-password/{token}", ["Parzibyte\Controladores\ControladorUsuarios", "formularioRestablecerPassword"]);
-$enrutador->post("/usuarios/restablecer-password", ["Parzibyte\Controladores\ControladorUsuarios", "restablecerPassword"]);
-# Reenviar correo de registro
-$enrutador->get("/usuarios/reenviar-correo", ["Parzibyte\Controladores\ControladorUsuarios", "solicitarReenvioCorreo"]);
-$enrutador->post("/usuarios/reenviar-correo", ["Parzibyte\Controladores\ControladorUsuarios", "reenviarCorreo"]);
-
 $enrutador->get("/", ["Parzibyte\Controladores\ControladorLogin", "index"]);
-
+if (Comun::env("PERMITIR_REGISTRO_USUARIOS", true)) {
+    $enrutador->get("/registro", ["Parzibyte\Controladores\ControladorUsuarios", "registrar"]);
+    $enrutador->post("/usuarios/registro", ["Parzibyte\Controladores\ControladorUsuarios", "registro"]);
+    $enrutador->get("/usuarios/verificar/{token}", ["Parzibyte\Controladores\ControladorUsuarios", "verificar"]);
+    # Cuando quieren resetear
+    $enrutador->get("/usuarios/solicitar-nueva-password", ["Parzibyte\Controladores\ControladorUsuarios", "formularioSolicitarNuevaPassword"]);
+    $enrutador->post("/usuarios/solicitar-nueva-password", ["Parzibyte\Controladores\ControladorUsuarios", "solicitarNuevaPassword"]);
+    # Cuando ya les llegó el correo
+    $enrutador->get("/usuarios/restablecer-password/{token}", ["Parzibyte\Controladores\ControladorUsuarios", "formularioRestablecerPassword"]);
+    $enrutador->post("/usuarios/restablecer-password", ["Parzibyte\Controladores\ControladorUsuarios", "restablecerPassword"]);
+    # Reenviar correo de registro
+    $enrutador->get("/usuarios/reenviar-correo", ["Parzibyte\Controladores\ControladorUsuarios", "solicitarReenvioCorreo"]);
+    $enrutador->post("/usuarios/reenviar-correo", ["Parzibyte\Controladores\ControladorUsuarios", "reenviarCorreo"]);
+}
 return $enrutador;
