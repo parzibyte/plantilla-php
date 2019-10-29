@@ -2,7 +2,6 @@
 {% block titulo %}Agregar usuario
 {% endblock %}
 {% block contenido %}
-    {% set token = token_csrf() %}
     <main class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -10,7 +9,7 @@
             </div>
             <div class="col-12 col-sm-3">
                 <form action="{{ URL_RAIZ }}/usuarios/guardar" method="post">
-                    <input type="hidden" name="token_csrf" value="{{ token }}">
+                    {% include "componentes/token_csrf.twig" %}
                     {% include "componentes/sesion_flash.twig" %}
                     <div class="form-group">
                         <label for="correo">Correo electrónico</label>
