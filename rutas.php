@@ -10,7 +10,8 @@ $enrutador = new RouteCollector();
 
 $enrutador->filter("logueado", function () {
     if (empty(SesionService::leer("correoUsuario"))) {
-        return Redirect::to("/login")->do();
+        Redirect::to("/login")->do();
+        return true;
     }
     return null; # Cualquier otra cosa que NO sea null va a prevenir la ejecución de la ruta
 });
@@ -18,8 +19,8 @@ $enrutador->filter("logueado", function () {
 $enrutador->filter("administrador", function () {
     $idUsuario = SesionService::leer("idUsuario");
     if (!$idUsuario || !ModeloUsuarios::uno($idUsuario)->administrador) {
-        # TODO: aquí haz la redirección a donde el usuario deba ir
-        return Redirect::to("/perfil/cambiar-password")->do();
+        Redirect::to("/perfil/cambiar-password")->do();
+        return true;
     }
     return null; # Cualquier otra cosa que NO sea null va a prevenir la ejecución de la ruta
 });
@@ -38,7 +39,7 @@ $enrutador->filter("token_csrf", function () {
 });
 
 $enrutador
-    ->group(["before" => "logueado"], function ($enrutadorVistasPrivadas) {
+    ->group(["before" => "logueado"], function (RouteCollector $enrutadorVistasPrivadas) {
         $enrutadorVistasPrivadas
             ->get("/perfil/cambiar-password", ["Parzibyte\Controladores\ControladorUsuarios", "perfilCambiarPassword"])
             ->post("/perfil/cambiar-password", ["Parzibyte\Controladores\ControladorUsuarios", "perfilGuardarPassword"])
@@ -49,22 +50,22 @@ $enrutador
  * que obviamente está logueado
  */
 $enrutador
-    ->group(["before" => ["administrador"]], function ($enrutadorVistasPrivadas) {
-        $enrutadorVistasPrivadas->group(["before" => ["token_csrf"]], function ($enrutadorToken) {
+    ->group(["before" => ["administrador"]], function (RouteCollector $enrutadorVistasPrivadas) {
+        $enrutadorVistasPrivadas->group(["before" => ["token_csrf"]], function (RouteCollector $enrutadorToken) {
             $enrutadorToken
                 ->get(
                     "/usuarios/removerAdministrador/{idUsuario}",
                     ["Parzibyte\Controladores\ControladorUsuarios", "removerAdministrador"]
-                );
+                )
+                ->post("/usuarios/eliminar", ["Parzibyte\Controladores\ControladorUsuarios", "eliminar"])
+                ->post("/usuarios/guardar", ["Parzibyte\Controladores\ControladorUsuarios", "guardar"]);
         });
         $enrutadorVistasPrivadas
             ->get("/ajustes", ["Parzibyte\Controladores\ControladorAjustes", "index"])
             ->get("/usuarios", ["Parzibyte\Controladores\ControladorUsuarios", "index"])
             ->get("/usuarios/agregar", ["Parzibyte\Controladores\ControladorUsuarios", "agregar"])
             ->get("/usuarios/hacerAdministrador/{idUsuario}", ["Parzibyte\Controladores\ControladorUsuarios", "hacerAdministrador"])
-            ->post("/usuarios/eliminar", ["Parzibyte\Controladores\ControladorUsuarios", "eliminar"])
-            ->get("/usuarios/eliminar/{idUsuario}", ["Parzibyte\Controladores\ControladorUsuarios", "confirmarEliminacion"])
-            ->post("/usuarios/guardar", ["Parzibyte\Controladores\ControladorUsuarios", "guardar"]);
+            ->get("/usuarios/eliminar/{idUsuario}", ["Parzibyte\Controladores\ControladorUsuarios", "confirmarEliminacion"]);
     });
 
 $enrutador->post("/login", ["Parzibyte\Controladores\ControladorLogin", "login"]);
