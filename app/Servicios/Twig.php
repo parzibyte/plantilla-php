@@ -3,8 +3,8 @@
 namespace Parzibyte\Servicios;
 
 use Parzibyte\Modelos\ModeloUsuarios;
-use Twig\Environment as Twig_Environment;
-use Twig\TwigFunction as Twig_SimpleFunction;
+use Twig\Environment;
+use Twig\TwigFunction;
 use Twig\Loader\FilesystemLoader;
 
 class Twig
@@ -12,13 +12,13 @@ class Twig
 
     public static function obtener()
     {
-        $loader = new FilesystemLoader(DIRECTORIO_RAIZ . "/vistas");
         $cachearTwig = boolval(Comun::env("HABILITAR_CACHE_TWIG", false));
         $rutaCacheTwig = false;
         if ($cachearTwig) {
             $rutaCacheTwig = Comun::env("RUTA_CACHE_TWIG", "cache_twig");
         }
-        $twig = new Twig_Environment($loader, [
+        $loader = new FilesystemLoader(DIRECTORIO_RAIZ . "/vistas");
+        $twig = new Environment($loader, [
             "cache" => $rutaCacheTwig,
         ]);
         $twig->addGlobal("URL_DIRECTORIO_PUBLICO", URL_DIRECTORIO_PUBLICO);
@@ -31,11 +31,11 @@ class Twig
         $twig->addGlobal("USUARIO_LOGUEADO", SesionService::leer("correoUsuario"));
         $usuario = ModeloUsuarios::uno(SesionService::leer("idUsuario"));
         $twig->addGlobal("USUARIO_ADMIN", $usuario != null && $usuario->administrador);
-        $twig->addFunction(new Twig_SimpleFunction("sesion_flash", function ($clave) {
+        $twig->addFunction(new TwigFunction("sesion_flash", function ($clave) {
             return SesionService::flash($clave);
         }));
-        $twig->addFunction(new Twig_SimpleFunction("token_csrf", function () {
-            return \Parzibyte\Servicios\Seguridad::obtenerTokenCSRF();
+        $twig->addFunction(new TwigFunction("token_csrf", function () {
+            return Seguridad::obtenerTokenCSRF();
         }));
         return $twig;
     }
