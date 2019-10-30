@@ -2,6 +2,7 @@
   "name": "parzibyte/framework-php",
   "description": "Caja de herramientas que sirve como plantilla para desarrollar con PHP",
   "type": "project",
+  "minimum-stability": "stable",
   "require": {
     "phroute/phroute": "^2.1",
     "twig/twig": "^2.0",
