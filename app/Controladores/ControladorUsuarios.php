@@ -134,7 +134,7 @@ class ControladorUsuarios
     {
         if (ModeloVerificacionesUsuarios::verificarPorToken($token)) {
 
-            Redrect::with([
+            Redirect::with([
                 "mensaje" => "Verificado correctamente. Ya puedes iniciar sesión",
                 "tipo" => "success",
             ])
